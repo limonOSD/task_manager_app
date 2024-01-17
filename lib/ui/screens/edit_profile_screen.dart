@@ -242,9 +242,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Container(
                   padding: const EdgeInsets.only(left: 16),
                   child: Visibility(
-                      visible: photo == null,
-                      replacement: Text(photo?.name ?? ''),
-                      child: const Text('Select a photo')),
+                    visible: photo == null,
+                    replacement: Text(photo?.name ?? ''),
+                    child: const Text('Select a photo'),
+                  ),
                 ),
               ))
         ],
