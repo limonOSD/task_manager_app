@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:task_manager_app/data/network_caller/network_caller.dart';
-import 'package:task_manager_app/data/utility/urls.dart';
-import '../../data/models/task.dart';
+import '/data/models/task.dart';
+import '/data/network_caller/network_caller.dart';
+import '/data/utility/urls.dart';
 
 enum TaskStatus {
   New,

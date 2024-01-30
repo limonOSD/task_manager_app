@@ -4,9 +4,10 @@ class NetworkResponse {
   final dynamic jsonResponse;
   final String? errorMessage;
 
-  NetworkResponse(
-      {this.statusCode = -1,
-      required this.isSuccess,
-      this.jsonResponse,
-      this.errorMessage = 'something went wrong'});
+  NetworkResponse({
+    this.statusCode = -1,
+    required this.isSuccess,
+    this.jsonResponse,
+    this.errorMessage = 'Something went wrong',
+  });
 }

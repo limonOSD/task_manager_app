@@ -3,9 +3,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:task_manager_app/app.dart';
 import 'package:task_manager_app/ui/screens/controllers/auth_controller.dart';
-import 'package:task_manager_app/ui/screens/login_screen.dart';
+import '/app.dart';
+
+import '/ui/screens/login_screen.dart';
 
 import 'network_response.dart';
 
@@ -20,11 +21,10 @@ class NetworkCaller {
         'Content-type': 'Application/json',
         'token': AuthController.token.toString(),
       });
-      log(response.headers.toString());
       log(response.statusCode.toString());
       log(response.body.toString());
-
-      if (response.statusCode == 200) {
+      var status = jsonDecode(response.body)['status'];
+      if (response.statusCode == 200 && status == 'success') {
         return NetworkResponse(
           isSuccess: true,
           jsonResponse: jsonDecode(response.body),
@@ -34,7 +34,6 @@ class NetworkCaller {
         if (isLogin == false) {
           backToLogin();
         }
-
         return NetworkResponse(
           isSuccess: false,
           statusCode: response.statusCode,
@@ -55,7 +54,6 @@ class NetworkCaller {
   Future<NetworkResponse> getRequest(String url) async {
     try {
       log(url);
-
       final Response response = await get(Uri.parse(url), headers: {
         'Content-type': 'Application/json',
         'token': AuthController.token.toString(),
@@ -63,8 +61,9 @@ class NetworkCaller {
       log(response.headers.toString());
       log(response.statusCode.toString());
       log(response.body.toString());
+      var status = jsonDecode(response.body)['status'];
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && status == 'success') {
         return NetworkResponse(
           isSuccess: true,
           jsonResponse: jsonDecode(response.body),
@@ -89,7 +88,7 @@ class NetworkCaller {
     }
   }
 
-  void backToLogin() async {
+  Future<void> backToLogin() async {
     await AuthController.clearAuthData();
     Navigator.pushAndRemoveUntil(
         TaskManagerApp.navigationKey.currentContext!,

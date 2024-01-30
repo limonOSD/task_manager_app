@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/models/task_list_model.dart';
+import 'package:task_manager_app/data/network_caller/network_caller.dart';
+import 'package:task_manager_app/data/network_caller/network_response.dart';
 import 'package:task_manager_app/data/utility/urls.dart';
 import 'package:task_manager_app/widget/profile_summary_card.dart';
 import 'package:task_manager_app/widget/task_item_card.dart';
 
-import '../../data/network_caller/network_caller.dart';
-import '../../data/network_caller/network_response.dart';
-
-class ProgressTaskScreen extends StatefulWidget {
-  const ProgressTaskScreen({super.key});
+class ProgressTasksScreen extends StatefulWidget {
+  const ProgressTasksScreen({super.key});
 
   @override
-  State<ProgressTaskScreen> createState() => _ProgressTaskScreenState();
+  State<ProgressTasksScreen> createState() => _ProgressTasksScreenState();
 }
 
-class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
+class _ProgressTasksScreenState extends State<ProgressTasksScreen> {
   bool getProgressTaskInProgress = false;
   TaskListModel taskListModel = TaskListModel();
+
   Future<void> getProgressTaskList() async {
     getProgressTaskInProgress = true;
     if (mounted) {
@@ -49,30 +49,29 @@ class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
           Expanded(
             child: Visibility(
               visible: getProgressTaskInProgress == false,
-              replacement: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              replacement: const Center(child: CircularProgressIndicator()),
               child: RefreshIndicator(
                 onRefresh: getProgressTaskList,
                 child: ListView.builder(
-                    itemCount: taskListModel.taskList?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return TaskItemCard(
-                        task: taskListModel.taskList![index],
-                        onStatusChange: () {
-                          getProgressTaskList();
-                        },
-                        showProgress: (inProgress) {
-                          getProgressTaskInProgress = inProgress;
-                          if (mounted) {
-                            setState(() {});
-                          }
-                        },
-                      );
-                    }),
+                  itemCount: taskListModel.taskList?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return TaskItemCard(
+                      task: taskListModel.taskList![index],
+                      onStatusChange: () {
+                        getProgressTaskList();
+                      },
+                      showProgress: (inProgress) {
+                        getProgressTaskInProgress = inProgress;
+                        if (mounted) {
+                          setState(() {});
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
     ));

@@ -6,16 +6,17 @@ import 'package:task_manager_app/data/utility/urls.dart';
 import 'package:task_manager_app/widget/profile_summary_card.dart';
 import 'package:task_manager_app/widget/task_item_card.dart';
 
-class CompletedTaskScreen extends StatefulWidget {
-  const CompletedTaskScreen({super.key});
+class CompletedTasksScreen extends StatefulWidget {
+  const CompletedTasksScreen({super.key});
 
   @override
-  State<CompletedTaskScreen> createState() => _CompletedTaskScreenState();
+  State<CompletedTasksScreen> createState() => _CompletedTasksScreenState();
 }
 
-class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
+class _CompletedTasksScreenState extends State<CompletedTasksScreen> {
   bool getCompletedTaskInProgress = false;
   TaskListModel taskListModel = TaskListModel();
+
   Future<void> getProgressTaskList() async {
     getCompletedTaskInProgress = true;
     if (mounted) {
@@ -25,6 +26,8 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
         await NetworkCaller().getRequest(Urls.getCompletedTasks);
     if (response.isSuccess) {
       taskListModel = TaskListModel.fromJson(response.jsonResponse);
+    } else {
+      debugPrint(response.statusCode.toString());
     }
     getCompletedTaskInProgress = false;
     if (mounted) {
@@ -41,39 +44,42 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Column(
-        children: [
-          const ProfileSummaryCard(),
-          Expanded(
-            child: Visibility(
-              visible: getCompletedTaskInProgress == false,
-              replacement: const Center(
-                child: CircularProgressIndicator(),
-              ),
-              child: RefreshIndicator(
-                onRefresh: getProgressTaskList,
-                child: ListView.builder(
-                    itemCount: taskListModel.taskList?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return TaskItemCard(
-                        task: taskListModel.taskList![index],
-                        onStatusChange: () {
-                          getProgressTaskList();
-                        },
-                        showProgress: (inProgress) {
-                          getCompletedTaskInProgress = inProgress;
-                          if (mounted) {
-                            setState(() {});
-                          }
-                        },
-                      );
-                    }),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const ProfileSummaryCard(),
+            Expanded(
+              child: Visibility(
+                visible: getCompletedTaskInProgress == false,
+                replacement: const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.green,
+                  ),
+                ),
+                child: RefreshIndicator(
+                  onRefresh: getProgressTaskList,
+                  child: ListView.builder(
+                      itemCount: taskListModel.taskList?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return TaskItemCard(
+                          task: taskListModel.taskList![index],
+                          onStatusChange: () {
+                            getProgressTaskList();
+                          },
+                          showProgress: (inProgress) {
+                            getCompletedTaskInProgress = inProgress;
+                            if (mounted) {
+                              setState(() {});
+                            }
+                          },
+                        );
+                      }),
+                ),
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
